@@ -5,7 +5,7 @@ import Webtask from 'webtask-tools';
 import { MongoClient } from 'mongodb';
 import { ObjectID } from 'mongodb';
 
-const collection = 'nbUsers';
+const collection = 'users';
 const server = express();
 
 
@@ -13,10 +13,10 @@ server.use(bodyParser.json());
 
 
 server.get('/', (req, res, next) => {
-  const { MONGO_URL } = req.webtaskContext.data;
+  const {MONGO_URL, uid} = req.webtaskContext.data;
   MongoClient.connect(MONGO_URL, (err, db) => {
     if (err) return next(err);
-    db.collection(collection).findOne({}, (err, result) => {
+    db.collection(collection).find({"_id": uid}, (err, result) => {
       db.close();
       if (err) return next(err);
       res.status(200).send(result);
