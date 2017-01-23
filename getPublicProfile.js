@@ -13,16 +13,14 @@ server.use(bodyParser.json());
 
 
 server.get('/', (req, res, next) => {
-  const {MONGO_URL, uid} = req.webtaskContext.data;
+  const { MONGO_URL, uid } = req.webtaskContext.data;
   MongoClient.connect(MONGO_URL, (err, db) => {
-    if (err) return next(err);
-    db.collection(collection).find({"_id": uid}, (err, result) => {
+    db.collection(collection).findOne({_id: uid}, (err, result) => {
+        if (err) return next(err);
       db.close();
       if (err) return next(err);
       res.status(200).send(result);
     });
   });
 });
-
-
 module.exports = Webtask.fromExpress(server);
