@@ -1,6 +1,3 @@
-////////////////////////////////////////////////
-// Libraries
-////////////////////////////////////////////////
 'use latest';
 
 // DB access
@@ -9,61 +6,17 @@ import express from 'express';
 import Webtask from 'webtask-tools';
 import { MongoClient } from 'mongodb';
 import { ObjectID } from 'mongodb';
-
-// Authentication
-// import express from 'express';
 import { fromExpress } from 'webtask-tools';
-// import bodyParser from 'body-parser';
+
 const app = express();
 
-////////////////////////////////////////////////
-// Body
-////////////////////////////////////////////////
-
-// DB access 
-const collection = 'users';
-const server = express();
-
-
-server.use(bodyParser.json());
-
-
-// server.get('/', (req, res, next) => {
-//   const { MONGO_URL, pseudo } = req.webtaskContext.data;
-//   MongoClient.connect(MONGO_URL, (err, db) => {
-//     db.collection(collection).findOne({_id: pseudo}, (err, result) => {
-//         if (err) return next(err);
-//       db.close();
-//       if (err) return next(err);
-//       res.status(200).send(result);
-//     });
-//  });
-//  });
-
-server.post('/', (req, res, next) => {
-  const { MONGO_URL } = req.webtaskContext.data;
-  // Do data sanitation here.
-  const model = req.body;
-  MongoClient.connect(MONGO_URL, (err, db) => {
-    if (err) return next(err);
-    db.collection(collection).insertOne(model, (err, result) => {
-      db.close();
-      if (err) return next(err);
-      res.status(201).send(result);
-    });
-  });
-});
-module.exports = Webtask.fromExpress(server);
-
-
-
-// Authentication
 app.use(bodyParser.json());
 
 // To retrieve JSON Web Key
 const jwksRsa = require('jwks-rsa');
 const jwt = require('express-jwt');
 
+// Authentication
 app.use((req, res, next) => { 
   const issuer = 'https://' + req.webtaskContext.secrets.AUTH0_DOMAIN + '/';
   jwt({
@@ -78,9 +31,32 @@ app.get('/test', (req, res) => {
   res.send(200);
 });
 
-app.get('/', (req, res) => {
-  // add your logic, you can use scopes from req.user
-  res.json({hi : req.user.sub});
+//app.get('/', (req, res) => {
+//  // add your logic, you can use scopes from req.user
+//  res.json({hi : req.user.sub});
+//});
+
+// DB access 
+const collection = 'users';
+
+app.get('/', (req, res, next) => {
+  const { MONGO_URL, pseudo, bio } = req.webtaskContext.data;
+  MongoClient.connect(MONGO_URL, (err, db) => {
+    if (err) return next(err);
+    db.collection(collection).insertOne(
+      {
+      _id: pseudo,
+      profile: {
+        auth0_id: req.user.sub,
+        bio: bio
+      }
+    },
+        (err, result) => {
+      db.close();
+      if (err) return next(err);
+      res.status(201).send(result);
+    });
+  });
 });
 
 module.exports = fromExpress(app);
