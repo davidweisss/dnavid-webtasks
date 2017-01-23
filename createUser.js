@@ -39,7 +39,7 @@ app.get('/test', (req, res) => {
 // DB access 
 const collection = 'users';
 
-app.get('/', (req, res, next) => {
+app.post('/', (req, res, next) => {
   const { MONGO_URL, pseudo, bio } = req.webtaskContext.data;
   MongoClient.connect(MONGO_URL, (err, db) => {
     if (err) return next(err);
