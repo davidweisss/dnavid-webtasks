@@ -13,9 +13,9 @@ server.use(bodyParser.json());
 
 
 server.get('/', (req, res, next) => {
-  const { MONGO_URL, uid } = req.webtaskContext.data;
+  const { MONGO_URL, pseudo } = req.webtaskContext.data;
   MongoClient.connect(MONGO_URL, (err, db) => {
-    db.collection(collection).findOne({_id: uid}, (err, result) => {
+    db.collection(collection).findOne({_id: pseudo}, (err, result) => {
         if (err) return next(err);
       db.close();
       if (err) return next(err);
