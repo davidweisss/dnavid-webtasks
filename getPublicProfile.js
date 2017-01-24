@@ -8,7 +8,6 @@ import { ObjectID } from 'mongodb';
 const collection = 'users';
 const server = express();
 
-
 server.use(bodyParser.json());
 
 
