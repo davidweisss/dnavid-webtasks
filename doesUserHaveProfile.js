@@ -39,17 +39,13 @@ app.get('/test', (req, res) => {
 // DB access 
 const collection = 'users';
 
-app.post('/', (req, res, next) => {
-  const { MONGO_URL, pseudo, bio } = req.webtaskContext.data;
+app.get('/', (req, res, next) => {
+  const { MONGO_URL, auth0_user_id } = req.webtaskContext.data;
   MongoClient.connect(MONGO_URL, (err, db) => {
     if (err) return next(err);
-    db.collection(collection).insertOne(
+    db.collection(collection).find(
       {
-      _id: pseudo,
-      profile: {
-        auth0_id: req.user.sub,
-        bio: bio
-      }
+      "profile.auth0_user_id":"facebook|10155144706889569"
     },
         (err, result) => {
       db.close();
