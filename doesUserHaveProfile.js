@@ -7,7 +7,7 @@ import Webtask from 'webtask-tools';
 import { MongoClient } from 'mongodb';
 import { ObjectID } from 'mongodb';
 import { fromExpress } from 'webtask-tools';
-import assert from 'assert';
+// import assert from 'assert';
 
 const app = express();
 
@@ -36,16 +36,16 @@ const collection = 'users';
 
 app.get('/', (req, res, next) => {
   const { MONGO_URL, uid } = req.webtaskContext.data;
-  MongoClient.connect(MONGO_URL, (err, db) => {
+  MongoClient.connect(MONGO_URL, 
+  // 
+  (err, db) => {
     if (err) return next(err);
     db.collection(collection).findOne(
       {
-        
-      "profile.auth0_user_id": uid
+    "profile.auth0_user_id": uid
       },
         (err, result) => {
       db.close();
-      console.log(result);
       if (err) return next(err);
       res.status(201).send(result);
     });
