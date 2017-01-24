@@ -11,7 +11,7 @@ import assert from 'assert';
 
 const app = express();
 
-app.use(bodyParser.json());
+// app.use(bodyParser.json());
 
 // To retrieve JSON Web Key
 const jwksRsa = require('jwks-rsa');
@@ -45,7 +45,7 @@ app.get('/', (req, res, next) => {
       },
         (err, result) => {
       db.close();
-      console.log(result);
+      console.log(result.length());
       if (err) return next(err);
       res.status(201).send(result);
     });
