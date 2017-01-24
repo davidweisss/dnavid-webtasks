@@ -35,14 +35,15 @@ app.get('/test', (req, res) => {
 const collection = 'users';
 
 app.get('/', (req, res, next) => {
-  const { MONGO_URL, uid } = req.webtaskContext.data;
+  const { MONGO_URL } = req.webtaskContext.data;
   MongoClient.connect(MONGO_URL, 
   // 
   (err, db) => {
     if (err) return next(err);
     db.collection(collection).findOne(
       {
-    "profile.auth0_user_id": uid
+   // "profile.auth0_user_id": uid
+      "profile.auth0_user_id": req.user.sub
       },
         (err, result) => {
       db.close();
