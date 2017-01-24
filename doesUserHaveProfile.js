@@ -45,7 +45,7 @@ app.get('/', (req, res, next) => {
       },
         (err, result) => {
       db.close();
-      console.log(result.length());
+      console.log(result);
       if (err) return next(err);
       res.status(201).send(result);
     });
