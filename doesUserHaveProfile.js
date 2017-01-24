@@ -31,22 +31,16 @@ app.get('/test', (req, res) => {
   res.send(200);
 });
 
-//app.get('/', (req, res) => {
-//  // add your logic, you can use scopes from req.user
-//  res.json({hi : req.user.sub});
-//});
-
-// DB access 
 const collection = 'users';
 
 app.get('/', (req, res, next) => {
-  const { MONGO_URL, auth0_user_id } = req.webtaskContext.data;
+  const { MONGO_URL, uid } = req.webtaskContext.data;
   MongoClient.connect(MONGO_URL, (err, db) => {
     if (err) return next(err);
-    db.collection(collection).find(
+    db.collection(collection).findOne(
       {
-      "profile.auth0_user_id":"facebook|10155144706889569"
-    },
+      "profile.auth0_id": uid
+      },
         (err, result) => {
       db.close();
       if (err) return next(err);
