@@ -31,24 +31,22 @@ app.get('/test', (req, res) => {
   res.send(200);
 });
 
-//app.get('/', (req, res) => {
-//  // add your logic, you can use scopes from req.user
-//  res.json({hi : req.user.sub});
-//});
 
 // DB access 
+// db.users.update( {"_id":"lalaland"},{ $set :{"profile.bio": "my new bio3"}},{upsert:false})
 const collection = 'users';
 
 app.post('/', (req, res, next) => {
-  const { MONGO_URL, pseudo } = req.webtaskContext.data;
+  const { MONGO_URL, category , key, text } = req.webtaskContext.data;
+  console.log(  req.user.sub, category , key, text );
+  const catDotKey = category + "." + key;
   MongoClient.connect(MONGO_URL, (err, db) => {
     if (err) return next(err);
-    db.collection(collection).insertOne(
-      {
-      _id: pseudo,
-      profile: {
-        auth0_user_id: req.user.sub
-      }
+    db.collection(collection).updateOne(
+      {"profile.auth0_user_id": req.user.sub},
+      {$set : {
+        [catDotKey]: text
+    }
     },
         (err, result) => {
       db.close();
