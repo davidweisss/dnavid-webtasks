@@ -31,15 +31,23 @@ app.get('/test', (req, res) => {
   res.send(200);
 });
 
-
-// DB access 
-// db.users.update( {"_id":"lalaland"},{ $set :{"profile.bio": "my new bio3"}},{upsert:false})
 const collection = 'users';
 
 app.post('/', (req, res, next) => {
-  const { MONGO_URL, category , key, text } = req.webtaskContext.data;
-  console.log(  req.user.sub, category , key, text );
-  const catDotKey = category + "." + key;
+  var { MONGO_URL, category, subcategory, key, text } = req.webtaskContext.data;
+  if(!category){
+    console.log("category is not defined, key is: ",key);
+    var catDotKey = key;
+    text= JSON.parse(text);
+  }
+  else if(!subcategory){
+         console.log("subcategory is not defined, category is: ", category);
+  var catDotKey = category + "." + key;
+  }else if(category && subcategory){
+    console.log("subcategory is defined, and is: ", subcategory);
+    var catDotKey = category + "." + subcategory + "." + key;
+ }
+  
   MongoClient.connect(MONGO_URL, (err, db) => {
     if (err) return next(err);
     db.collection(collection).updateOne(
