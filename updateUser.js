@@ -34,11 +34,11 @@ app.get('/test', (req, res) => {
 const collection = 'users';
 
 app.post('/', (req, res, next) => {
-  var { MONGO_URL, category, subcategory, key, text } = req.webtaskContext.data;
+  var { MONGO_URL, category, subcategory, key, text,json } = req.webtaskContext.data;
   if(!category){
     console.log("category is not defined, key is: ",key);
     var catDotKey = key;
-    text= JSON.parse(text);
+    text= text;
   }
   else if(!subcategory){
          console.log("subcategory is not defined, category is: ", category);
@@ -48,8 +48,14 @@ app.post('/', (req, res, next) => {
     var catDotKey = category + "." + subcategory + "." + key;
  }
   
+  if(json){
+    console.log("Parsing JSON")
+    text = JSON.parse(text)
+    
+  }
   MongoClient.connect(MONGO_URL, (err, db) => {
     if (err) return next(err);
+    console.log(catDotKey,text)
     db.collection(collection).updateOne(
       {"profile.auth0_user_id": req.user.sub},
       {$set : {
