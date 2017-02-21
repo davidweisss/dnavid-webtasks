@@ -42,12 +42,12 @@ app.get('/', (req, res, next) => {
     if (err) return next(err);
     db.collection(collection).findOne(
       {
-   // "profile.auth0_user_id": uid
       "profile.auth0_user_id": req.user.sub
       },
         (err, result) => {
       db.close();
       if (err) return next(err);
+      console.log(result)
       res.status(201).send(result);
     });
   });
